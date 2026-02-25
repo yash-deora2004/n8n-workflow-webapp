@@ -22,7 +22,7 @@ const IMAGE_QUALITY = 0.8;
 
 /**
  * Compress and resize an image to keep the base64 payload small.
- * VEO 3.1 doesn't need a 4K image — 1024px max dimension is plenty.
+ * RunwayML doesn't need a 4K image — 1024px max dimension is plenty.
  */
 function compressImage(file: File): Promise<string> {
   return new Promise((resolve, reject) => {

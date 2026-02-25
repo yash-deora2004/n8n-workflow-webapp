@@ -7,12 +7,12 @@ interface VideoResultProps {
 }
 
 export default function VideoResult({ result }: VideoResultProps) {
-  // VEO 3.1 may return video as a URL, base64 data, or in a nested structure.
-  // We detect and handle common response shapes.
+  // RunwayML returns video as a URL. We detect and handle common response shapes.
   const videoUrl =
     (result as Record<string, string>).videoUrl ??
     (result as Record<string, string>).url ??
     (result as Record<string, string>).video ??
+    (result as Record<string, string>).output ??
     null;
 
   const base64Video =

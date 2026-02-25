@@ -62,7 +62,7 @@ export default function Home() {
           Image to Video Generator
         </h1>
         <p className="mt-2 text-gray-400 text-sm">
-          Upload an image, describe what you want, and get a 30-second AI-generated video.
+          Upload an image, describe what you want, and RunwayML will generate a video.
         </p>
       </header>
 

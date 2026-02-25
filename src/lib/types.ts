@@ -5,7 +5,7 @@ export interface GenerateVideoRequest {
 }
 
 export interface GenerateVideoResponse {
-  // VEO 3.1 response — shape may vary, video URL or binary
+  // RunwayML response — typically returns a video URL
   [key: string]: unknown;
 }
 

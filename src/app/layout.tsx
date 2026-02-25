@@ -3,7 +3,7 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: "Image to Video Generator",
-  description: "Upload an image and generate a cinematic 30-second video with AI",
+  description: "Upload an image and generate a cinematic video with RunwayML",
 };
 
 export default function RootLayout({

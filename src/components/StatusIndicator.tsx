@@ -6,7 +6,7 @@ const STATUS_CONFIG: Record<AppStatus, { label: string; color: string }> = {
   idle: { label: "", color: "" },
   uploading: { label: "Preparing image...", color: "text-blue-400" },
   analyzing: { label: "AI is analyzing your image...", color: "text-yellow-400" },
-  generating: { label: "Generating your 30s video — this may take a few minutes...", color: "text-purple-400" },
+  generating: { label: "RunwayML is generating your video — this may take a few minutes...", color: "text-purple-400" },
   done: { label: "Video ready!", color: "text-green-400" },
   error: { label: "Something went wrong", color: "text-red-400" },
 };
