@@ -1,32 +1,23 @@
 import { NextRequest, NextResponse } from "next/server";
 
-const WEBHOOK_URL = process.env.N8N_WEBHOOK_URL!;
-
-// Task creation should complete within 60 seconds
-const FETCH_TIMEOUT_MS = 60 * 1000;
+const STATUS_WEBHOOK_URL = process.env.N8N_STATUS_WEBHOOK_URL!;
 
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
 
-    if (!WEBHOOK_URL) {
+    if (!STATUS_WEBHOOK_URL) {
       return NextResponse.json(
-        { error: "N8N_WEBHOOK_URL is not configured" },
+        { error: "N8N_STATUS_WEBHOOK_URL is not configured" },
         { status: 500 }
       );
     }
 
-    const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS);
-
-    const res = await fetch(WEBHOOK_URL, {
+    const res = await fetch(STATUS_WEBHOOK_URL, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(body),
-      signal: controller.signal,
     });
-
-    clearTimeout(timeout);
 
     const text = await res.text();
 

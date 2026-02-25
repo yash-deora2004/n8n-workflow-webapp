@@ -4,7 +4,7 @@ import { useState } from "react";
 import ImageUpload from "@/components/ImageUpload";
 import VideoResult from "@/components/VideoResult";
 import StatusIndicator from "@/components/StatusIndicator";
-import { generateVideo, fileToBase64 } from "@/lib/api";
+import { generateVideo, pollForVideo, fileToBase64 } from "@/lib/api";
 import { AppStatus, GenerateVideoResponse } from "@/lib/types";
 
 export default function Home() {
@@ -30,14 +30,17 @@ export default function Home() {
       setStatus("uploading");
       const base64 = await fileToBase64(imageFile);
 
-      setStatus("generating");
-      const response = await generateVideo({
+      setStatus("analyzing");
+      const { taskId } = await generateVideo({
         image: base64,
         imageAttributes: imageAttributes.trim(),
         videoIdea: videoIdea.trim(),
       });
 
-      setResult(response);
+      setStatus("generating");
+      const videoResult = await pollForVideo(taskId);
+
+      setResult({ videoUrl: videoResult.videoUrl });
       setStatus("done");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Unknown error");

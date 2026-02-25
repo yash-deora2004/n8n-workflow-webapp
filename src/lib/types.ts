@@ -4,8 +4,20 @@ export interface GenerateVideoRequest {
   videoIdea: string;
 }
 
+export interface TaskCreatedResponse {
+  taskId: string;
+  status: string;
+}
+
+export interface TaskStatusResponse {
+  taskId: string;
+  status: string;
+  videoUrl?: string;
+  error?: string;
+}
+
 export interface GenerateVideoResponse {
-  // RunwayML response — typically returns a video URL
+  videoUrl?: string;
   [key: string]: unknown;
 }
 

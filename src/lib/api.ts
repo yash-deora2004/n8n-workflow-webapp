@@ -1,8 +1,8 @@
-import { GenerateVideoRequest, GenerateVideoResponse } from "./types";
+import { GenerateVideoRequest, TaskCreatedResponse, TaskStatusResponse } from "./types";
 
 export async function generateVideo(
   data: GenerateVideoRequest
-): Promise<GenerateVideoResponse> {
+): Promise<TaskCreatedResponse> {
   const res = await fetch("/api/generate", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -17,13 +17,52 @@ export async function generateVideo(
   return res.json();
 }
 
+export async function checkTaskStatus(taskId: string): Promise<TaskStatusResponse> {
+  const res = await fetch("/api/status", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ taskId }),
+  });
+
+  if (!res.ok) {
+    const text = await res.text();
+    throw new Error(`Status check failed (${res.status}): ${text}`);
+  }
+
+  return res.json();
+}
+
+const POLL_INTERVAL_MS = 10_000;
+const MAX_POLL_ATTEMPTS = 30;
+
+export async function pollForVideo(
+  taskId: string,
+  onStatusUpdate?: (status: string) => void
+): Promise<TaskStatusResponse> {
+  for (let i = 0; i < MAX_POLL_ATTEMPTS; i++) {
+    await new Promise((r) => setTimeout(r, POLL_INTERVAL_MS));
+
+    const status = await checkTaskStatus(taskId);
+
+    if (onStatusUpdate) {
+      onStatusUpdate(status.status);
+    }
+
+    if (status.status === "SUCCEEDED") {
+      return status;
+    }
+
+    if (status.status === "FAILED") {
+      throw new Error(status.error || "Video generation failed");
+    }
+  }
+
+  throw new Error("Timed out waiting for video generation (5 minutes)");
+}
+
 const MAX_IMAGE_DIMENSION = 1024;
 const IMAGE_QUALITY = 0.8;
 
-/**
- * Compress and resize an image to keep the base64 payload small.
- * RunwayML doesn't need a 4K image — 1024px max dimension is plenty.
- */
 function compressImage(file: File): Promise<string> {
   return new Promise((resolve, reject) => {
     const img = new Image();
@@ -34,7 +73,6 @@ function compressImage(file: File): Promise<string> {
 
       let { width, height } = img;
 
-      // Scale down if either dimension exceeds the max
       if (width > MAX_IMAGE_DIMENSION || height > MAX_IMAGE_DIMENSION) {
         const scale = MAX_IMAGE_DIMENSION / Math.max(width, height);
         width = Math.round(width * scale);
@@ -53,7 +91,6 @@ function compressImage(file: File): Promise<string> {
 
       ctx.drawImage(img, 0, 0, width, height);
 
-      // Export as JPEG for smaller size
       const dataUrl = canvas.toDataURL("image/jpeg", IMAGE_QUALITY);
       const base64 = dataUrl.split(",")[1];
       resolve(base64);
@@ -69,12 +106,10 @@ function compressImage(file: File): Promise<string> {
 }
 
 export async function fileToBase64(file: File): Promise<string> {
-  // Compress images to reduce payload size
   if (file.type.startsWith("image/")) {
     return compressImage(file);
   }
 
-  // Fallback for non-image files
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.onload = () => {
