@@ -1,11 +1,9 @@
 import { GenerateVideoRequest, GenerateVideoResponse } from "./types";
 
-const WEBHOOK_URL = process.env.NEXT_PUBLIC_N8N_WEBHOOK_URL!;
-
 export async function generateVideo(
   data: GenerateVideoRequest
 ): Promise<GenerateVideoResponse> {
-  const res = await fetch(WEBHOOK_URL, {
+  const res = await fetch("/api/generate", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(data),
