@@ -2,6 +2,12 @@ import { NextRequest, NextResponse } from "next/server";
 
 const WEBHOOK_URL = process.env.N8N_WEBHOOK_URL!;
 
+// Video generation can take several minutes — allow up to 5 minutes
+const FETCH_TIMEOUT_MS = 5 * 60 * 1000;
+
+// Allow long-running requests (Next.js App Router)
+export const maxDuration = 300;
+
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
@@ -13,11 +19,17 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS);
+
     const res = await fetch(WEBHOOK_URL, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(body),
+      signal: controller.signal,
     });
+
+    clearTimeout(timeout);
 
     const text = await res.text();
 
