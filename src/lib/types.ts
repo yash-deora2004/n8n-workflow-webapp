@@ -2,6 +2,7 @@ export interface GenerateVideoRequest {
   image: string; // base64 encoded
   imageAttributes: string;
   videoIdea: string;
+  duration: number; // seconds
 }
 
 export interface TaskCreatedResponse {

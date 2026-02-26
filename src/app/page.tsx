@@ -12,6 +12,7 @@ export default function Home() {
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [imageAttributes, setImageAttributes] = useState("");
   const [videoIdea, setVideoIdea] = useState("");
+  const [duration, setDuration] = useState(10);
   const [status, setStatus] = useState<AppStatus>("idle");
   const [result, setResult] = useState<GenerateVideoResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -35,6 +36,7 @@ export default function Home() {
         image: base64,
         imageAttributes: imageAttributes.trim(),
         videoIdea: videoIdea.trim(),
+        duration,
       });
 
       setStatus("generating");
@@ -53,6 +55,7 @@ export default function Home() {
     setImagePreview(null);
     setImageAttributes("");
     setVideoIdea("");
+    setDuration(10);
     setStatus("idle");
     setResult(null);
     setError(null);
@@ -119,6 +122,27 @@ export default function Home() {
             rows={4}
             className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-sm placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent resize-none"
           />
+        </div>
+
+        {/* Duration */}
+        <div>
+          <label
+            htmlFor="duration"
+            className="block text-sm font-medium text-gray-300 mb-2"
+          >
+            Video Duration
+          </label>
+          <select
+            id="duration"
+            value={duration}
+            onChange={(e) => setDuration(Number(e.target.value))}
+            className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+          >
+            <option value={5}>5 seconds</option>
+            <option value={10}>10 seconds</option>
+            <option value={15}>15 seconds</option>
+            <option value={20}>20 seconds</option>
+          </select>
         </div>
 
         {/* Status */}
