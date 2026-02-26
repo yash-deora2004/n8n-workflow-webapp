@@ -140,8 +140,6 @@ export default function Home() {
           >
             <option value={5}>5 seconds</option>
             <option value={10}>10 seconds</option>
-            <option value={15}>15 seconds</option>
-            <option value={20}>20 seconds</option>
           </select>
         </div>
 
