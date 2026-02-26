@@ -1,13 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 
-const WEBHOOK_URL = process.env.N8N_WEBHOOK_URL!;
-
 // Task creation should complete within 60 seconds
 const FETCH_TIMEOUT_MS = 60 * 1000;
 
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
+    const WEBHOOK_URL = process.env.N8N_WEBHOOK_URL;
 
     if (!WEBHOOK_URL) {
       return NextResponse.json(

@@ -1,10 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 
-const STATUS_WEBHOOK_URL = process.env.N8N_STATUS_WEBHOOK_URL!;
-
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
+    const STATUS_WEBHOOK_URL = process.env.N8N_STATUS_WEBHOOK_URL;
 
     if (!STATUS_WEBHOOK_URL) {
       return NextResponse.json(
